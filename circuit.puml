@@ -1,0 +1,229 @@
+@startuml
+class Circuit {
+    +str name
+    +dict bundles
+    +dict buses
+    +dict conductors
+    +dict geometries
+    +dict transformers
+    +dict transmission_lines
+    +dict loads
+    +dict generators
+    +pandas.Array ybus
+
+    +add_bundle(name: str, num_conductors: int, spacing: float, conductor: Conductor):)
+    +add_bus(name, base_kv)
+    +add_conductor(name, diam, GMR, resistance, ampacity)
+    +add_geometry(name, xa, ya, xb, yb, xc, yc)
+    +add_transformer(name, bus1, bus2, power_rating, impedance_percent, x_over_r_ratio)
+    +add_transmission_line(name, bus1, bus2, bundle, conductor, geometry, length)
+    +add_load(name, bus, real_power, reactive_power)
+    +add_generator(name, bus, voltage_setpoint, mw_setpoint, x1, x2, x0, zg)
+    +calc_ybus()
+    +print_ybus()
+}
+
+class Bundle {
+    +str name
+    +int num_conductors
+    +float spacing
+    +Conductor conductor
+    -float DSC
+    -float DSL
+
+    +calc_radii()
+}
+
+class Bus {
+    +str name
+    +float base_kv
+    -Bus.bus_count index
+    -int Bus.bus_count
+    -string bus_type
+    -float vpu
+    -float delta
+    -float real_power
+    -float reactive_power
+}
+
+class Conductor {
+    +str name
+    +float diam
+    +float GMR
+    +float resistance
+    +float ampacity
+    -float radius
+}
+
+class Geometry {
+    +str name
+    +float xa
+    +float ya
+    +float xb
+    +float yb
+    +float xc
+    +float yc
+    -float Deq
+
+    +calc_Deq()
+}
+
+class Transformer {
+    +str name
+    +Bus bus1
+    +Bus bus2
+    +float power_rating
+    +float impedance_percent
+    +float x_over_r_ratio
+    -float xpu
+    -float rpu
+    -float xpu_xfmr
+    -float rpu_xfmr
+    -float zpu
+    -float ypu
+    -float yprim
+
+    +calc_impedance()
+    +calc_admittance()
+    +calc_matrix()
+}
+
+class TransmissionLine {
+    +str name
+    +Bus bus1
+    +Bus bus2
+    +Bundle bundle
+    +Conductor conductor 
+    +Geometry geometry 
+    +float length    
+    -float rseries
+    -float rpu
+    -float xseries
+    -float xpu
+    -float zpu
+    -float ypu
+    -float bpu
+    -float yprim
+
+    +calc_series()
+    +calc_admittance()
+    +calc_matrix()
+}
+
+class Load {
+    +str name
+    +Bus bus
+    +float real_power
+    +float reactive_power
+}
+
+class Generator {
+    +str name
+    +Bus bus
+    +float voltage_setpoint
+    +float mw_setpoint
+    +float x1
+    +float x2
+    +float x0
+    +float zg
+    -complex y_bus_admittance
+    -complex y2
+    -complex y0
+}
+
+class Settings {
+    -int frequency
+    -int base_power
+}
+
+class Solution {
+    +str name
+    +Bus bus
+    +Circuit circuit
+    +Load load
+    -dict delta
+    -dict voltage
+    -dict P
+    -dict Q
+    -numpy.ndarray x
+    -numpy.ndarray y
+    -numpy.ndarray mismatch
+
+    +start()
+    +calc_Px()
+    +calc_Qx()
+    +initialize_x()
+    +initialize_y()
+    +calc_mismatch()
+}
+
+class Solution_Faults {
+    +Circuit circuit
+    -float voltage_pu
+    -numpy.ndarray ybus
+    -numpy.ndarray zbus
+
+    +calculat_fault_currents(bus: Bus)
+}
+
+class BusType {
+    -int SLACK
+    -int PV
+    -int PQ
+}
+
+class Jacobian {
+    +Circuit circuit 
+
+    +calc_jacobian(buses, ybus, angles, voltages)
+    +_calc_j1(buses, ybus, angles, voltages, p_index, theta_index)
+    +_calc_j2(buses, ybus, angles, voltages, p_index, v_index)
+    +_calc_j3(buses, ybus, angles, voltages, q_index, theta_index)
+    +_calc_j4(buses, ybus, angles, voltages, q_index, v_index)
+}   
+
+class PowerFlow {
+    +Circuit circuit
+    +Jacobian jacobian
+
+    +solve_circuit(circuit, tol, max_iter)    
+}
+
+Circuit --> Bundle
+Circuit --> Bus
+Circuit --> Conductor
+Circuit --> Geometry
+Circuit --> Transformer
+Circuit --> TransmissionLine
+Circuit --> Load
+Circuit --> Generator
+
+Bundle --> Conductor
+
+Transformer --> Bus
+
+TransmissionLine --> Bus
+TransmissionLine --> Conductor
+TransmissionLine --> Geometry
+TransmissionLine --> Bundle
+
+Load --> Bus
+
+Generator --> Bus
+
+Solution --> Bus
+Solution --> Circuit
+Solution --> Load
+
+Solution_Faults --> Bus
+Solution_Faults --> Circuit
+
+Jacobian --> BusType
+Jacobian --> Circuit
+Jacobian --> Bus
+Jacobian --> Load
+
+PowerFlow --> Jacobian
+PowerFlow --> Solution
+
+@enduml
