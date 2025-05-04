@@ -9,6 +9,7 @@ class Circuit {
     +dict transmission_lines
     +dict loads
     +dict generators
+    +dict solar_gen
     +pandas.Array ybus
 
     +add_bundle(name: str, num_conductors: int, spacing: float, conductor: Conductor):)
@@ -19,6 +20,7 @@ class Circuit {
     +add_transmission_line(name, bus1, bus2, bundle, conductor, geometry, length)
     +add_load(name, bus, real_power, reactive_power)
     +add_generator(name, bus, voltage_setpoint, mw_setpoint, x1, x2, x0, zg)
+    +add_solar_gen(self, name, bus, y_pv, f_pv, gt, gt_stc, a_p, tc, tc_stc)
     +calc_ybus()
     +print_ybus()
 }
@@ -189,6 +191,19 @@ class PowerFlow {
     +solve_circuit(circuit, tol, max_iter)    
 }
 
+class Solar_gen {
+    +str name
+    +Bus bus
+    +float Y_pv
+    +float F_pv
+    +float Gt
+    +float Gt_stc
+    +float A_p
+    +float Tc
+    +float Tc_stc
+    -float P_pv
+}
+
 Circuit --> Bundle
 Circuit --> Bus
 Circuit --> Conductor
@@ -197,6 +212,7 @@ Circuit --> Transformer
 Circuit --> TransmissionLine
 Circuit --> Load
 Circuit --> Generator
+Circuit --> Solar_gen
 
 Bundle --> Conductor
 
@@ -210,6 +226,7 @@ TransmissionLine --> Bundle
 Load --> Bus
 
 Generator --> Bus
+Solar_gen --> Bus
 
 Solution --> Bus
 Solution --> Circuit
