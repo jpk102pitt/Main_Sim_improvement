@@ -188,13 +188,13 @@ print(f"Fault Current at Bus4: {magnitude:.4f} ∠ {angle_deg:.2f}° ")
 #print(f"\nSolution Faults Current: {ifs[0]}")
 #print(f"\nSolution Faults Bus Voltages: {ifs[1]}")
 post_fault_voltages = np.abs(ifs[1])  # Magnitude only
-print("\\n--- Post-Fault Voltages at All Buses (p.u.) ---")
-for i, v in enumerate(post_fault_voltages):
-    print(f"Bus {i+1}: {v:.5f}")
+#print("\\n--- Post-Fault Voltages at All Buses (p.u.) ---")
+#for i, v in enumerate(post_fault_voltages):
+    #print(f"Bus {i+1}: {v:.5f}")
 
 #print(f"\nSolution Faults Current: {ifs_2[0]}")
 #print(f"\nSolution Faults Bus Voltages: {ifs_2[1]}")
-Z44 = faults.zbus[circuit1.buses["Bus4"].index, circuit1.buses["Bus4"].index]
-print(f"Zbus[4,4] = {Z44}")
+#Z44 = faults.zbus[circuit1.buses["Bus4"].index, circuit1.buses["Bus4"].index]
+#print(f"Zbus[4,4] = {Z44}")
 
 print(f"Solar PV Output (p_pv) at Bus3: {circuit1.solar_gen['S1'].p_pv:.2f} kW")
