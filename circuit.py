@@ -7,6 +7,7 @@ from transmissionline import TransmissionLine
 from load import Load
 from generator import Generator
 import pandas as pd
+from solar_gen import Solar_gen
 
 class Circuit:
     def __init__(self, name: str):
@@ -19,6 +20,7 @@ class Circuit:
         self.transmission_lines = dict()
         self.loads = dict()
         self.generators = dict()
+        self.solar_gen = dict()
         self.ybus = None
 
     def add_bundle(self, name, num_conductors, spacing, conductor):
@@ -55,6 +57,11 @@ class Circuit:
     def add_generator(self, name, bus, voltage_setpoint, mw_setpoint, x1, x2, x0, zg):
         self.generators[name] = Generator(name, self.buses[bus], voltage_setpoint, mw_setpoint, x1, x2, x0, zg)
         self.buses[bus].real_power += mw_setpoint
+
+    #adding the solar generation
+    def add_solar_gen(self, name, bus, y_pv, f_pv, gt, gt_stc, a_p, tc, tc_stc):
+        self.solar_gen[name] = Solar_gen(name, self.buses[bus], y_pv, f_pv, gt, gt_stc, a_p, tc, tc_stc)
+        self.buses[bus].real_power += self.solar_gen[name].p_pv/1000
 
     def calc_ybus(self):
         N = len(self.buses)
