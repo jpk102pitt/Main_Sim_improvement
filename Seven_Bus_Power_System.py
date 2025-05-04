@@ -1,3 +1,4 @@
+import solar_gen
 from circuit import Circuit
 from jacobian import Jacobian
 import numpy as np
@@ -5,6 +6,7 @@ from powerflow import PowerFlow
 from solution import Solution
 from load import Load
 from solution_symmetric import Solution_Faults
+from solar_gen import Solar_gen
 
 circuit1 = Circuit("Test Circuit")
 
@@ -80,6 +82,8 @@ circuit1.add_load("Load6", "Bus6", 0, 0)
 #adding the generators
 circuit1.add_generator("G1", "Bus1", 1.0, 0.0, .12, 0.14, 0.05, 0)
 circuit1.add_generator("G7", "Bus7", 1.0, 200, .12, 0.14, 0.05, 0)
+#add the solar generation
+circuit1.add_solar_gen("S1", "Bus3", 100000, .95, .8, 1, .0045, 60, 25)
 
 np.set_printoptions(threshold=np.inf, linewidth=np.inf)
 
@@ -193,3 +197,4 @@ for i, v in enumerate(post_fault_voltages):
 Z44 = faults.zbus[circuit1.buses["Bus4"].index, circuit1.buses["Bus4"].index]
 print(f"Zbus[4,4] = {Z44}")
 
+print(f"Solar PV Output (p_pv) at Bus3: {circuit1.solar_gen['S1'].p_pv:.2f} kW")
